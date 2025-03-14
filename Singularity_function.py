@@ -23,7 +23,8 @@ class Singularity_function:
     # Initialize singularity function
     def __init__(self, **kwargs):
         
-        # Unpack arguments or use defaults - DEPRICATE DEFAULTS
+        ## Unpack Arguments
+        # Manual 
         try:
             # Unpack values
             self.coeff = kwargs['coeff']
@@ -34,12 +35,12 @@ class Singularity_function:
             self.state = 'CUSTOM'
 
         except:
-            # Assign default values
-            self.coeff = 100
-            self.a = 250
-            self.pow = -2
-            self.state = 'DEFAULT'
-    
+            raise('MUST PASS ARGUMENTS TO SINGULARITY FUNCTION:\n\tcoeff\n\ta\n\tpow')
+
+        
+        self.eval_all_a = kwargs.get('eval_all_a', False)
+        assert(self.pow % 1 == 0)
+
 
     # Integrate singularity Function
     def integrate(self, n=1):
@@ -91,19 +92,12 @@ class Singularity_function:
         return sol
 
 
-# Returns polynomial value If power is positive or x >= a, used as a helper function for value
+    # Returns polynomial value If power is positive and x >= a, used as a helper function for value. Disregards a conditions if self.eval_all_a is true
     def single_value(self, x, direction):
-        if x - self.a < 0 or self.pow < 0:
+        # Check for no value on power condition, x>a condition, or x=a, negative direction condition 
+        if (self.pow < 0) or ((not self.eval_all_a) and ((x-self.a < 0) or (x==self.a and direction[0].lower()=='n'))):
             return 0
-        
-        result = self.coeff * (x - self.a) ** self.pow
-        
-        if x-self.a != 0:
-            return result
-        if direction[0].lower() == 'p':
-            return result
-        if direction[0].lower() == 'n':
-            return 0
+        return self.coeff * (x - self.a) ** self.pow
             
 
     # return string representation of singularity function
@@ -115,7 +109,12 @@ class Singularity_function:
 
     
     def __str__(self):
-        return f'{self.coeff} < x - {self.a}>^({self.pow})'
+        # Use normal () delimiter for eval all a, <> by default
+        if self.eval_all_a:
+            delims = ['(', ')']
+        else:
+            delims = ['<', '>']
+        return f'{self.coeff} {delims[0]}x - {self.a}{delims[1]}^({self.pow})'
 
 
     # Objects equal if all parameters match

@@ -13,6 +13,7 @@ INPUT:
 
 class Singularity_equation:
 
+
     # Define own iterable of all singularity functions
     def __init__(self, sings):
         
@@ -89,7 +90,7 @@ class Singularity_equation:
         try:
             self.sings.remove(sing)
         except:
-            print(f'ERROR: {sing} not found to delete')
+            raise(f'{sing} not found to delete')
 
 
     # Sort sings by a value
@@ -98,7 +99,7 @@ class Singularity_equation:
 
 
     # Plot given a figure
-    def plot(self, x, fig=None):
+    def plot(self, x, label=None, fig=None):
         """
         Plots the value of the singularity function an a given range with added c functions
         Inputs:
@@ -108,10 +109,9 @@ class Singularity_equation:
         """
         y = self.value(x)
 
-        if fig:
-            fig.plot(x, y)
-        else:
-            plot.plot(x, y)
+        if not fig:
+            fig = plot
+        fig.plot(x, y, label=label)
 
 
     '''-----------------------------MAGIC METHODS-----------------------------'''
@@ -201,6 +201,10 @@ class Singularity_equation:
         return output.strip('\n')
     
 
+    def __len__(self):
+        return len(self.sings)
+
+
 
 
 
@@ -239,7 +243,7 @@ if __name__ == '__main__':
     print(f'Value at 0: {test.value(0)}')
     print(f'Value at L: {test.value(200)}')
 
-    print(f'\PLOTTING:-----------------------------------------------------------------------\n')
+    print(f'\nPLOTTING:-----------------------------------------------------------------------\n')
     l = 0.0508
     l = 0.019
     # l = 0.0762

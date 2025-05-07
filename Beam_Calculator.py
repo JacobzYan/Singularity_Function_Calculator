@@ -128,7 +128,7 @@ class sing_calc():
                 supp_sings.append(sing(coeff=1, a=supp['loc'], pow=-1))
                 supp_labels.append(f'Fr{i}')
             
-            elif supp[type] == 'f':
+            elif supp['type'] == 'f':
                 
                 # Keep track of fixed supports for y' equations
                 n_fixed = n_fixed + 1
@@ -267,6 +267,7 @@ class sing_calc():
         # Plot pinned supports hollow and fixed supports filled in
         pinned_list = []
         fixed_list = []
+        
         for bc in self.bc:
             if bc['type'] == 'p':
                 pinned_list.append(bc['loc'])
@@ -278,8 +279,13 @@ class sing_calc():
         fig.scatter(pinned_list, np.zeros(len(pinned_list)), marker='o', facecolors='None', edgecolors='k', label='Pinned Supports')
         fig.scatter(fixed_list, np.zeros(len(fixed_list)), marker='o', facecolors='k', edgecolors='k', label='Fixed Supports')
         fig.legend()
-        fig.xlabel('x[m]')
-        fig.ylabel('y[m]')
+        
+        try:
+            fig.xlabel('x[m]')
+            fig.ylabel('y[m]')
+        except:
+            fig.set_xlabel('x[m]')
+            fig.set_ylabel('y[m]')
 
 
     # Debug print statement, only prints when verbose set to true
@@ -329,7 +335,7 @@ if __name__ == '__main__':
     # loading = sing_eq([sing(coeff=2, a=1, pow=-1)])
     loading = [sing(coeff=2, a=1, pow=-1), sing(coeff=2, a=3, pow=-1)]
     bc = [
-            {'loc':0, 'type': 'p'}
+            {'loc':0, 'type': 'f'}
             ,{'loc':0.5, 'type': 'p'}
             ,{'loc':1.5, 'type': 'p'}
             ,{'loc':2, 'type': 'p'}
@@ -338,7 +344,7 @@ if __name__ == '__main__':
     a = sing_calc(l=l, I=I, E=E, loading=loading, bc=bc, verbose=False)
     # a.plot('deflection')
     # a.plot('slope')
-    # a.plot('moment')
-    a.plot('shear')
+    a.plot('moment')
+    # a.plot('shear')
     plot.show()
 
